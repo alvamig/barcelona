@@ -1,10 +1,19 @@
-print ("hello")
+import pandas
 
-import pandas as pd 
-import seaborn as sns 
-
-notes = pd.read_csv("bus_stops.csv")
-
-print (notes)
-
-print("allo")
+deaths = pandas.read_csv("deaths.csv")
+accidents_2017 = pandas.read_csv("accidents_2017.csv")
+air_quality_Nov2017 = pandas.read_csv("air_quality_Nov2017.csv")
+air_stations_Nov2017 = pandas.read_csv("air_stations_Nov2017.csv")
+births = pandas.read_csv("births.csv")
+bus_stops = pandas.read_csv("bus_stops.csv")
+immigrants_by_nationality = pandas.read_csv("immigrants_by_nationality.csv")
+immigrants_emigrants_by_age = pandas.read_csv("immigrants_emigrants_by_age.csv")
+immigrants_emigrants_by_destination = pandas.read_csv("immigrants_emigrants_by_destination.csv")
+immigrants_emigrants_by_destination2 = pandas.read_csv("immigrants_emigrants_by_destination2.csv")
+immigrants_emigrants_by_sex = pandas.read_csv("immigrants_emigrants_by_sex.csv")
+life_expectancy = pandas.read_csv("life_expectancy.csv")
+most_frequent_baby_names = pandas.read_csv("most_frequent_baby_names.csv")
+most_frequent_names = pandas.read_csv("most_frequent_names.csv")
+population = pandas.read_csv("population.csv")
+transports = pandas.read_csv("transports.csv")
+unemployment = pandas.read_csv("unemployment.csv")
