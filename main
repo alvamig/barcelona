@@ -1,2 +1,8 @@
 print ("hello")
 
+import pandas as pd 
+import seaborn as sns 
+
+notes = pd.read_csv("bus_stops.csv")
+
+print (notes)
