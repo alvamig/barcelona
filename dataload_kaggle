@@ -1,0 +1,36 @@
+#1. Aller chercher les datasets a partir de Kaggle
+
+#installe le module kaggle qui permet d'acceder le API enlever le ## si jamais fait
+##!pip install kaggle
+
+# crée un directory kaggle enlever le ## si jamais fait
+##!mkdir ~\.kaggle
+
+# assurez vous d'avoir une compte et clé d'accès kaggle et que ceux-ci se trouvent dans le directory \.kaggle comme kaggle.json
+# si vous n'avez pas cette clé vous pouvez la récuperer en suivant les instructions à l'url suivant: \
+#  https://jovian.ai/forum/t/what-is-kaggle-api-key-how-to-get-my-kaggle-key/17721 pour plus d'info https://github.com/Kaggle/kaggle-api
+
+#The OS module provides allows you to interface with the underlying operating system that Python is running on
+import os
+
+#ici nous rentrons manuellement mes identifiants kaggle
+os.environ['KAGGLE_USERNAME'] = "alvachavo"
+os.environ['KAGGLE_KEY'] = "0c8f89f6f9361bec7d49985fc30d24b9"
+
+
+import kaggle
+# envoie les identifiants a l'interface kaggle
+kaggle.api.authenticate()
+
+#kaggle.api.dataset_download_file('dorianlazar/medium-articles-dataset', file_name='medium_data.csv',  path='data/')
+kaggle.api.dataset_download_file('alvachavo/cities', file_name='barcelona/births.csv', path='barcelona/')
+
+
+import pandas as pd
+#df1 = pd.read_csv('data/medium_data.csv.zip')
+
+births = pd.read_csv('births.csv')
+deaths = pd.read_csv('deaths.csv')
+accidents_2017 = pd.read_csv("accidents_2017.csv")
+
+print (births)
