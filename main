@@ -1,19 +1,100 @@
-import pandas
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
-deaths = pandas.read_csv("deaths.csv")
-accidents_2017 = pandas.read_csv("accidents_2017.csv")
-air_quality_Nov2017 = pandas.read_csv("air_quality_Nov2017.csv")
-air_stations_Nov2017 = pandas.read_csv("air_stations_Nov2017.csv")
-births = pandas.read_csv("births.csv")
-bus_stops = pandas.read_csv("bus_stops.csv")
-immigrants_by_nationality = pandas.read_csv("immigrants_by_nationality.csv")
-immigrants_emigrants_by_age = pandas.read_csv("immigrants_emigrants_by_age.csv")
-immigrants_emigrants_by_destination = pandas.read_csv("immigrants_emigrants_by_destination.csv")
-immigrants_emigrants_by_destination2 = pandas.read_csv("immigrants_emigrants_by_destination2.csv")
-immigrants_emigrants_by_sex = pandas.read_csv("immigrants_emigrants_by_sex.csv")
-life_expectancy = pandas.read_csv("life_expectancy.csv")
-most_frequent_baby_names = pandas.read_csv("most_frequent_baby_names.csv")
-most_frequent_names = pandas.read_csv("most_frequent_names.csv")
-population = pandas.read_csv("population.csv")
-transports = pandas.read_csv("transports.csv")
-unemployment = pandas.read_csv("unemployment.csv")
+#lire les données
+deaths = pd.read_csv("deaths.csv")
+accidents_2017 = pd.read_csv("accidents_2017.csv")
+air_quality_Nov2017 = pd.read_csv("air_quality_Nov2017.csv")
+air_stations_Nov2017 = pd.read_csv("air_stations_Nov2017.csv")
+births = pd.read_csv("births.csv")
+bus_stops = pd.read_csv("bus_stops.csv")
+immigrants_by_nationality = pd.read_csv("immigrants_by_nationality.csv")
+immigrants_emigrants_by_age = pd.read_csv("immigrants_emigrants_by_age.csv")
+immigrants_emigrants_by_destination = pd.read_csv("immigrants_emigrants_by_destination.csv")
+immigrants_emigrants_by_destination2 = pd.read_csv("immigrants_emigrants_by_destination2.csv")
+immigrants_emigrants_by_sex = pd.read_csv("immigrants_emigrants_by_sex.csv")
+life_expectancy = pd.read_csv("life_expectancy.csv")
+most_frequent_baby_names = pd.read_csv("most_frequent_baby_names.csv")
+most_frequent_names = pd.read_csv("most_frequent_names.csv")
+population = pd.read_csv("population.csv")
+transports = pd.read_csv("transports.csv")
+unemployment = pd.read_csv("unemployment.csv")
+
+#choisir quel dataframe sera traité
+
+## prenons population
+data = population
+
+print (type(data))
+
+
+## resumé des statistiques descriptives des colonnes
+data.describe(include ='all')
+
+#nous voyons que l'information est affichée pour chaque quartier de 2013 a 2017
+
+
+#regardons les données
+display(data)
+
+#afin de faciliter l'analyse nous filtrerons les données pour garder seulement une année ex :2015
+msg = 'choisir une année entre 2013 et 2017\n'
+annee = int(input(msg))
+
+
+#analysons maitenant le df en conservant seulement les données de l'année choisie:
+
+df_tri_année = data[data['Year'] == annee]
+
+
+display(df_tri_année)
+# nous remarquons maitenant que les données semblent sous-divisées par groupe d'age et sexe
+# choisons un seul quartier pour analyser avec un peu plus de détail
+
+
+#mais quels sont les quartiers de Barcelone? demandons a python d'afficher les valeurs uniques des noms de quartiers
+
+colonne = 'Neighborhood.Name'
+data[colonne].unique()
+
+
+#continuons notre analyse en choisisant un quartier maitenant que nous les connaissons ex: 'el Barri Gòtic'
+
+msg = 'choisir un quartier\n'
+quartier = []
+choix = (input(msg))
+quartier.append(choix)
+#quartier = 'el Barri Gòtic'
+
+
+df_tri_quartier = data.loc[data['Neighborhood.Name'].isin(quartier)]
+df_tri_quartier
+
+# nous avons reussi a filtrer par quartier mais perdons le filtre par année
+
+
+# incluons maitenant les deux filtres
+df_tri_multiple = data[(data['Year'] == annee) & data['Neighborhood.Name'].isin(quartier)]
+df_tri_multiple
+
+#nous remarquons que même après le double tri il y a des lignes preque identiques.
+#en fait chaque liste correspond a un citoyen, le colonne nombre correspond a son identifiant!
+
+
+# regroupons les citoyens par groupe d'age
+
+df_tri_multiple['Age'].value_counts()
+
+
+## verification des types de données presents dans chaque colonne
+data.dtypes
+
+
+#modifier les tyoes de données si besoin
+
+colonne = 'District.Name'
+#print (head(data[colonne]))
+data[colonne].head
+
+
