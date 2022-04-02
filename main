@@ -91,10 +91,29 @@ df_tri_multiple['Age'].value_counts()
 data.dtypes
 
 
-#modifier les tyoes de données si besoin
+#modifier les types de données si besoin
 
 colonne = 'District.Name'
 #print (head(data[colonne]))
 data[colonne].head
+
+# Tableau affichant le nombre de population par quartier 
+
+data_nb_population = data.groupby(['Neighborhood.Name'])[['Number']].sum() 
+
+
+# Tableau affichant le top 10 du nombre de population par quartier
+data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+
+# Nous voulons maintenant stocker ce "top 10" dans un dataframe
+
+data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+data_nb_populationtop10
+
+# Tableau affichant le top 10 des quartiers avec la plus petite taille de population 
+
+data_nb_populationlast10= data_nb_population.sort_values(by=["Number"], ascending = False).tail(10).round(2) 
+data_nb_populationlast10 
+
 
 
