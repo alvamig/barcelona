@@ -106,7 +106,7 @@ plt.title('Répartition des transports')
 plt.show() 
 
 
-#nous voyons que l'information soit affichée pour chaque quartier de 2013 a 2017
+#nous voulons que l'information soit affichée pour chaque quartier de 2013 a 2017
 
 
 #regardons les données
@@ -114,7 +114,17 @@ display(data)
 
 #afin de faciliter l'analyse nous filtrerons les données pour garder seulement une année ex :2015
 msg = 'choisir une année entre 2013 et 2017\n'
-annee = int(input(msg))
+choix_a = int(input(msg))
+redemander ='oui'
+
+while redemander == 'oui':
+    if (choix_a <= 2017) and (choix_a >= 2013):
+        print("l'annee choisie est : {0}".format(choix_a))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez une année parmi: 2013, 2014, 2015, 2016 et 2017")
+        choix_a = int(input(msg))
 
 
 #analysons maitenant le df en conservant seulement les données de l'année choisie:
