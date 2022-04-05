@@ -49,29 +49,19 @@ data_nb_populationtop10
 
 #Histogramme population - message d'erreur
 
-import seaborn as sns
-
 # Histogramme présentant le nombre de population selon la ville, top 10 
-import seaborn as sns
-import matplotlib.pylab as plt
-
-barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y='Number', data=data_nb_populationtop10, order = data_nb_populationtop10['Neighborhood.Name'].value_counts().index)
-barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
-plt.xticks(rotation=90)
-plt.show()
-
+##barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y='Number', data=data_nb_populationtop10, order = data_nb_populationtop10['Neighborhood.Name'].value_counts().index)
+##barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
+##plt.xticks(rotation=90)
+##plt.show()
 #Ça ne fonctionne pas ici puisqu'en faisant le sort, les noms de quartiers devenaient des index. Il faut donc ajouter un reset.index()
 
 data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2).reset_index() 
 data_nb_populationtop10
 
-#Importer librairie seaborn
 
-import seaborn as sns
 
 # # Histogramme présentant les 10 quartiers avec le plus de population 
-import seaborn as sns
-import matplotlib.pylab as plt
 
 barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y="Number",data=data_nb_populationtop10, order = data_nb_populationtop10['Neighborhood.Name'].value_counts().index)
 barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
