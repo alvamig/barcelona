@@ -74,9 +74,6 @@ data_nb_populationlast10= data_nb_population.sort_values(by=["Number"], ascendin
 data_nb_populationlast10 
 
 # Histogramme présentant les 10 quartiers avec le moins de population 
-import seaborn as sns
-import matplotlib.pylab as plt
-
 barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y="Number",data=data_nb_populationlast10, order = data_nb_populationlast10['Neighborhood.Name'].value_counts().index)
 barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
 plt.xticks(rotation=90)
