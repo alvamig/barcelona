@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+
 
 #lire les données
 deaths = pd.read_csv("deaths.csv")
@@ -221,3 +223,158 @@ data = bus_stops
 carte_bus
 
 # comme ca
+
+
+
+#On souhaite afficher les 5 quartiers qui ont la meilleure 'life_expectancy' pour le sexe et la periode choisi par l'utilisateur.
+print(life_expectancy.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+
+# afin d'eviter des resultats vides, on verifie l'input de l'utilisateur avant de continuer.
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#on stocke les noms des colonnes de la dataframe 'life_expectancy' dans une liste et on garde juste les periodes.
+Periode = list(life_expectancy.columns)
+del(Periode[0])
+del(Periode[-1])
+print(Periode)
+#choissisez l'index de la periode voulu
+msg_p = "choisisez l'index de la periode voulu : 1,2,3,4  \n"
+choix_p = input(msg_p)
+# puisque les index des listes commence par 0 et non pas par 1, on change le type de l'input a 'integer' et on diminue le choix de l'utilisateur de 1  
+choix_p = int(choix_p) -1 
+print('la periode choisi est : {0}'.format(Periode[choix_p]))
+
+
+
+#On afficher les resultats selon les critères choisis:
+life_ex = life_expectancy[['Neighborhood','Gender',Periode[choix_p]]]
+life_ex = life_ex[(life_ex['Gender'] == choix_s)]
+life_ex = life_ex.sort_values(by = Periode[choix_p], ascending = False) 
+life_ex
+
+
+# On remarque qu'il y a des valeurs null qui ont été lues comme 'NaN', 
+# donc on souhaite remplacer les 'NaN' dans le resultat par 'No data'.
+life_ex[Periode[choix_p]] = life_ex[Periode[choix_p]].fillna("No Data")
+display(life_ex)
+
+
+
+# Ici on affiche les 5 quartiers qui ont la meilleure 'life_expectancy' selon les criteres choisi : 
+life_e = life_ex.head(5)
+display(life_e)
+
+ #Affichage
+barplot = sns.catplot(x="Neighborhood", y=Periode[choix_p], kind="bar", data=life_e, aspect=2) 
+barplot.set(xlabel='Neighborhood', ylabel='life_expectancy', title=' les 5 quartiers qui ont le meilleur life_expectancy')
+plt.xticks(rotation=90)
+plt.show()
+
+#On demande a l'utilisateur de choisir un quartier et un sexe afin d'analyser le changement du 'life expectancy' entre 2006 et 2014
+# demandons a python d'afficher les valeurs uniques des noms de quartiers
+colonne = 'Neighborhood'
+V_unique = life_expectancy[[colonne,'Gender']].groupby([colonne]).count().reset_index()
+V_unique = V_unique.drop(columns=['Gender'])
+print('Vous avez {0} quartiers'.format(V_unique.size))
+display(V_unique.T)
+
+# demandons a 'l'utilisateur de choisir un quartier: 
+msg = "choisisez l'index  du quartier a analyser\n"
+choix = int(input(msg))
+quartiers = V_unique.to_dict()
+quartier_choisi = quartiers['Neighborhood'][choix]
+print('Vous avez choisi : {0} -{1}'.format(choix,quartier_choisi))
+
+# demandons a 'l'utilisateur de choisir un sexe: 
+
+print(life_expectancy.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#On affiche les resultats selon les critères choisis:
+life_ex1 = life_expectancy[(life_expectancy['Neighborhood'] == quartier_choisi)&(life_expectancy['Gender']==choix_s)]
+life_ex1
+
+
+#on crée une dataframe qui nous permet de faire l'affichage.
+liife = life_ex1.T.reset_index()
+liife= liife.drop(0)
+liife= liife.drop(6)
+liife.columns = ["Periode" , "Life Expectancy"]
+liife
+
+
+life_ex_q = sns.relplot(kind='line', x='Periode', y='Life Expectancy', data=liife)
+life_ex_q.set(title=' Life expectancy pour le sexe :{0} et pour le quartier : {1}'.format(choix_s,quartier_choisi))
+plt.show()
+
+
+
+
+
+
+# Pour la table unemployment on souhaite garder juste les colonnes qui sont pertinants a notre analyse, donc commence par filtrer les données. 
+unemployment = unemployment[['Year','Neighborhood Name','Gender','Number']].groupby(['Year','Neighborhood Name','Gender']).sum().reset_index()
+unemployment.sort_values(by = 'Year')
+
+
+# a la fin, on souhaite comparer 3 quartier selon le nombre de personne en chomage.
+# On commence par demander a l'utilisateur de choisir le sexe qu'il souhaite analyser et on verifie l'entrée de l'utilisateur :
+print(unemployment.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#on affiche les années disponibles et on demande a l'utilisateur de choisir l'année:
+colonne_y = 'Year'
+V_unique_y = unemployment[[colonne_y,'Number']].groupby([colonne_y]).sum().reset_index()
+V_unique_y = V_unique_y.drop(columns=['Number'])
+display(V_unique_y.T)
+Years = V_unique_y.to_dict()
+msg = "choisir l'index  de l'année a analyser\n"
+choix = int(input(msg))
+year_choisi = Years['Year'][choix]
+print('Vous avez choisi : {0} -{1}'.format(choix,year_choisi))
+
+
+# On affiche les 3 quartiers qui ont le plus bas nombre de personne en chomage:
+chomage = unemployment[(unemployment['Gender'] == aaa) & (unemployment['Year']== year_choisi) ]
+chomage = chomage.sort_values(by = 'Number', ascending = False) 
+chomage = chomage.tail(3)
+chomage
+
+#Affichage
+barplot = sns.catplot(x="Neighborhood Name", y='Number', kind="bar", data=chomage) 
+barplot.set(ylabel='Nombre de personnes en chômage.', title=' les 3 quartiers qui ont le plus bas nombre de personne en chomage')
+
+plt.show()
+
+
+
