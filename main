@@ -98,7 +98,10 @@ plt.pie(df_transports,
         labels = df_transports.index,
         autopct = '%1.1f%%',
         colors = ['#00A699','#FF5A60','#79CCCD','#767676'],
-        shadow = True)
+        labeldistance = 1.2,
+        explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,), 
+        pctdistance =0.85,)
+        
 plt.title('Répartition des transports')
 plt.show() 
 
