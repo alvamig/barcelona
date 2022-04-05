@@ -402,7 +402,7 @@ quartier.append(choix)
 df_tri_quartier = data.loc[data['Neighborhood Name'].isin(quartier)]
 df_tri_quartier
 
-#On combine les deux codes afin d'analyser les données selon les quartier mais uniquement en 2017
+#On combine les deux codes afin d'analyser les données selon les quartiers mais uniquement en 2017
 df_tri_quartier_2017 = data[(data['Year'] == 2017) & data['Neighborhood Name'].isin(quartier)]
 df_tri_quartier_2017
 
@@ -410,7 +410,7 @@ df_tri_quartier_2017
 nationalite =df_tri_quartier_2017.groupby(['Neighborhood Name'])[['Nationality']].count()
 nationalite
 
-#Affichons le tout sur un histogram afin de mieux visualiser la répartition
+#Affichons le tout sur un histogramme afin de mieux visualiser la répartition
 Number = data["Number"]
 Nationality = data["Nationality"]
 histo = sns.catplot(kind = "bar", x = "Nationality" , y = "Number", data = df_tri_quartier_2017)
@@ -418,13 +418,13 @@ histo.set(xlabel = "Nationality", ylabel = "Nombre", title = choix)
 plt.xticks(rotation=90)
 plt.show()
 
-#Nous voyons que l'histogram est beaucoup trop chargé! réglons le tir.
+#Nous voyons que l'histogramme est beaucoup trop chargé! réglons le tir.
 
 #tri par nationalité
 tri_nationalite = df_tri_quartier_2017[["Nationality","Number","Neighborhood Name"]].groupby(["Nationality"]).sum()
 display(tri_nationalite)
 
-#Nous observons que plusieurs données sont négligeable! Il est donc logique de vouloir faire un Top 20.
+#Nous observons que plusieurs données sont négligeables! Il est donc logique de vouloir faire un Top 20.
 nationalite20 = tri_nationalite.sort_values(by=["Number"], ascending = False).head(20).round(2).reset_index()
 nationalite20
 
