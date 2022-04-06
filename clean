@@ -60,6 +60,9 @@ loadeddfs.extend(["most_frequent_baby_names.csv","most_frequent_names.csv","popu
 #ce dictionnaire nous permettra de documenter les fonctions que nous créeons dans le programme
 fonctions = {}
 
+#appel des diverses fonctions
+ba.bonjour(loadeddfs)
+ba.choixdf(loadeddfs,pd)
 ba.barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="Population",title="Taille de population par quartier",fonctions=fonctions)
 ba.barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs',fonctions=fonctions)
