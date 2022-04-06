@@ -1,9 +1,57 @@
 
+##cette fonction permet d'accueillir l'usager et lui presenter les datasets par défaut
+def bonjour(loadeddfs):
+    ## proposer de voir les datasets dans le programme ##
+    accueil = 'Bonjour! ce programme contient par défaut des données de la ville de Barcelone\n'
+    accueil += 'voulez vous voir les datasets disponibles?\n'
+    accueil += 'oui/non\n'
+
+    reponse = input(accueil)
+
+    if (reponse.lower()) == 'oui':
+        print('les voici:\n')
+        display(loadeddfs)
+    return
+
+##cette fonction permet à l'usager de choisir un df particulier, parmi barcelone ou de son choix
+
+def choixdf(loadeddfs,pd):
+    intro = 'vous pouvez choisir un jeu de données ou en ajouter un nouveau.\n'
+    intro += 'voulez-vous proceder? oui/non\n'
+    reponse = input(intro)
+
+    while (reponse.lower()) == 'oui':
+        msg = "veuillez entrer le nom ou l'emplacement des données:\n"
+        msg +="celles-ci doivent être en format csv\n"
+        msg +="le fichier est lu avec pandas.read_csv\n"
+        lieu = input(msg)
+
+        try:
+            newdata = pd.read_csv(lieu)
+        except FileNotFoundError:
+            print('\n')
+            print('le fichier ne peut être lu')
+            print("veuillez vérifier l'emplacement ou le nom\n")
+            print('voulez-vous recommencer?')
+            reponse = input()
+
+        else:
+            print('voici votre dataframe\n')
+            data = newdata
+            if lieu not in loadeddfs:
+                loadeddfs.append(lieu)
+            display(newdata)
+            break
+    return data
+
+
+
+
 ##cette fonction permet d'afficher 2 diagrammes a barres presentant les 10 unités 
 ##avec les plus et le moins de valeurs pour la mesure choisie
-# par défaut il montre les quartiers avec les plus et le moins de population
-# les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
-# et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés
+##par défaut il montre les quartiers avec les plus et le moins de population
+## les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
+## et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés
 
 
 #les valeurs par défaut correspondent a un df preloadé mais peuvent être ajustées selon vos besoins
@@ -69,4 +117,6 @@ et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés'''
     
     plt.show()
     return
+
+
 
