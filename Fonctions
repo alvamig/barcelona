@@ -1,3 +1,15 @@
+### le but de cet outil est de permettre a un entrepreneur de faire l'analyse ###
+### de données provenant des bases de données disponibles publiquement et reperer des occasions d'affaires, etudes de marché ou des insights ###
+### nous utiliserons les données provenant de https://www.kaggle.com/datasets/xvivancos/barcelona-data-sets
+### d'autres bases de données pourraient egalement être traitées par l'utilisateur
+
+### Le code source est hebergé sur https://github.com/alvamig/barcelona ###
+### vous pouvez contacter alvaro.chavez-zavaleta@hec.ca si vous désirez devenir collaborateur ###
+
+
+#importer les modules dont nous aurons besoin
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +19,7 @@ import requests
 import json
 
 
-#lire les données
+#lire les données par défaut
 deaths = pd.read_csv("deaths.csv")
 accidents_2017 = pd.read_csv("accidents_2017.csv")
 air_quality_Nov2017 = pd.read_csv("air_quality_Nov2017.csv")
@@ -26,9 +38,30 @@ population = pd.read_csv("population.csv")
 transports = pd.read_csv("transports.csv")
 unemployment = pd.read_csv("unemployment.csv")
 
-###donner l'option à l'utilisateur de loader un nouveau dataset autre que celui que nous utilisons ###
-intro = 'Bonjour! ce programme contient des données de la ville de Barcelone\n'
-intro += 'voulez vous rajouter un nouveau jeu de données? oui/non\n'
+#crée une liste des dfs disponibles
+loadeddfs = []
+loadeddfs = ["deaths.csv","accidents_2017.csv","air_quality_Nov2017.csv","air_stations_Nov2017.csv"]
+loadeddfs.extend(["births.csv","bus_stops.csv","immigrants_by_nationality.csv","immigrants_emigrants_by_age.csv"])
+loadeddfs.extend(["immigrants_emigrants_by_destination.csv","immigrants_emigrants_by_destination2.csv","immigrants_emigrants_by_sex.csv","life_expectancy.csv"])
+loadeddfs.extend(["most_frequent_baby_names.csv","most_frequent_names.csv","population.csv","transports.csv","unemployment.csv"])
+#display(loadeddfs)
+
+## proposer des datasets ##
+accueil = 'Bonjour! ce programme contient par défaut des données de la ville de Barcelone\n'
+accueil += 'voulez vous voir les datasets disponibles?\n'
+accueil += 'oui/non\n'
+
+reponse = input(accueil)
+
+if (reponse.lower()) == 'oui':
+    print('les voici:\n')
+    display(loadeddfs)
+
+    
+
+##donner l'option à l'utilisateur de choisi un dataset ou loader un autre que celui que nous utilisons##
+intro = 'voulez vous pouvez choisir un jeu de données ou en ajouer un nouveau.\n'
+intro += 'voulez-vous continuer? oui/non\n'
 
 reponse = input(intro)
 
@@ -42,6 +75,7 @@ while (reponse.lower()) == 'oui':
     try:
         newdata = pd.read_csv(lieu)
     except FileNotFoundError:
+        print('\n')
         print('le fichier ne peut être lu')
         print("veuillez vérifier l'emplacement ou le nom\n")
         print('voulez-vous recommencer?')
@@ -49,11 +83,10 @@ while (reponse.lower()) == 'oui':
     
     else:
         print('voici votre dataframe\n')
+        data = newdata
+        loadeddfs.append(lieu)
         display(newdata)
-        break
-
-
-#choisir quel dataframe sera traité
+        break#choisir quel dataframe sera traité
 
 ## prenons population
 data = population
