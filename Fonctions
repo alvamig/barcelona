@@ -49,6 +49,10 @@ loadeddfs.extend(["immigrants_emigrants_by_sex.csv","life_expectancy.csv","unemp
 loadeddfs.extend(["most_frequent_baby_names.csv","most_frequent_names.csv","population.csv","transports.csv"])
 #display(loadeddfs)
 
+#ce dictionnaire nous permettra de documenter les fonctions que nous créeons dans le programme
+fonctions = {}
+
+
 ## proposer des datasets ##
 accueil = 'Bonjour! ce programme contient par défaut des données de la ville de Barcelone\n'
 accueil += 'voulez vous voir les datasets disponibles?\n'
@@ -92,6 +96,12 @@ while (reponse.lower()) == 'oui':
         display(newdata)
         break
         
+##cette fonction permet d'afficher 2 diagrammes a barres presentant les 10 unités 
+##avec les plus et le moins de valeurs pour la mesure choisie
+# par défaut il montre les quartiers avec les plus et le moins de population
+# les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
+# et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés
+
 
 #les valeurs par défaut correspondent a un df preloadé mais peuvent être ajustées selon vos besoins
 #faites attention a la structure 
@@ -144,14 +154,18 @@ def barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlab
     barplot = sns.catplot(kind='bar', x=colonne1, y=colonne2,data=data_nb_populationlast10, order = data_nb_populationlast10[colonne1].value_counts().index)
     barplot.set(xlabel=xlabel, ylabel=ylabel, title=title)
     plt.xticks(rotation=90)
+    
+    texte = '''cette fonction permet d'afficher 2 diagrammes a barres presentant les unités
+avec les plus et le moins de valeurs pour la mesure choisie
+par défaut il montre les quartiers avec les plus et le moins de population,
+les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
+et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés'''
+
+    fonctions.update({'barres()':(texte)})
+    
     plt.show()
     return
 
-##cette fonction permet d'afficher 2 diagrammes a barres presentant les 10 unités 
-##avec les plus et le moins de valeurs pour la mesure choisie
-# par défaut il montre les quartiers avec les plus et le moins de population
-# les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
-# et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés
 barres()
 barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs')
 
