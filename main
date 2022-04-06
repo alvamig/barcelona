@@ -141,19 +141,32 @@ display(df_tri_année)
 
 
 #mais quels sont les quartiers de Barcelone? demandons a python d'afficher les valeurs uniques des noms de quartiers
+#gardons cette liste de noms
 
 colonne = 'Neighborhood.Name'
-data[colonne].unique()
+quartiers = data[colonne].unique()
+quartiers
 
 
 #continuons notre analyse en choisisant un quartier maitenant que nous les connaissons ex: 'el Barri Gòtic'
 
-msg = 'choisir un quartier\n'
-quartier = []
-choix = (input(msg))
-quartier.append(choix)
-#quartier = 'el Barri Gòtic'
+msg = 'choisir un quartier\n'    
 
+#nous faisons une liste car on pourrait eventuellement modifier le code pour pouvoir selectionner plusieurs cartiers
+quartier = []
+q = (input(msg))
+quartier.append(q)
+
+redemander ='oui'
+while redemander == 'oui':
+    if q in quartiers:        
+        print("le quartier choisi est : {0}".format(q))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez un quartier dans la liste suivante")
+        print(quartiers)
+        q = (input(msg))
 
 df_tri_quartier = data.loc[data['Neighborhood.Name'].isin(quartier)]
 df_tri_quartier
