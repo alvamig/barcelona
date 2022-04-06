@@ -2,6 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import folium
+import requests
+import json
 
 
 #lire les données
@@ -129,7 +132,7 @@ while redemander == 'oui':
 
 #analysons maitenant le df en conservant seulement les données de l'année choisie:
 
-df_tri_année = data[data['Year'] == annee]
+df_tri_année = data[data['Year'] == choix_a]
 
 
 display(df_tri_année)
@@ -159,17 +162,17 @@ df_tri_quartier
 
 
 # incluons maitenant les deux filtres
-df_tri_multiple = data[(data['Year'] == annee) & data['Neighborhood.Name'].isin(quartier)]
+df_tri_multiple = data[(data['Year'] == choix_a) & data['Neighborhood.Name'].isin(quartier)]
 df_tri_multiple
 
 #nous remarquons que même après le double tri il y a des lignes preque identiques.
-#en fait chaque liste correspond a un citoyen, le colonne nombre correspond a son identifiant!
+#en fait chaque liste correspond a un citoyen, est-ce que la colonne nombre correspond a l'identifiant citoyen?
 
 
 # regroupons les citoyens par groupe d'age
 
 df_tri_multiple['Age'].value_counts()
-
+# nous voyons qu'il y a presque toujours le meme nombre de citoyens par groupe d'age, au final chaque ligne corresponds a une entree d'une fiche d'un groupe de citoyens avec les memes quaractéristiques
 
 ## verification des types de données presents dans chaque colonne
 data.dtypes
@@ -184,61 +187,58 @@ data[colonne].head
 # Tableau affichant le nombre de population par quartier 
 
 data_nb_population = data.groupby(['Neighborhood.Name'])[['Number']].sum() 
+data_nb_population
 
-
-# Tableau affichant le top 10 du nombre de population par quartier
+# appel du top 10 du nombre de population par quartier
 data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
 
 # Nous voulons maintenant stocker ce "top 10" dans un dataframe
-
 data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
 data_nb_populationtop10
 
 # Tableau affichant le top 10 des quartiers avec la plus petite taille de population 
-
 data_nb_populationlast10= data_nb_population.sort_values(by=["Number"], ascending = False).tail(10).round(2) 
 data_nb_populationlast10 
 
 ### code pour afficher la carte folium ###
 
-import folium
-import requests
-import json
-
 ## prenons les arrets de bus
-
 data = bus_stops
 display(data)
 ## nous voyons que les bus sont énumérés par quatier, coordonnées et si c'est des bus de nuit ou de jour
 
 #intialisation de la carte folium avec laquelle nous travaillerons
 carte_bus = folium.Map()
+carte_bus
 
 # nous voudrons afficher une carte des bus avec au centre le point milieu de tous les arrets.
 latitude_moy  = data['Latitude'].mean()
 longitude_moy = data['Longitude'].mean()
 
-# nous activons l'option watercolor pour un affichage plus simple et agreable a regarder
+# nous activons l'option de tuile watercolor pour un affichage plus simple et agreable a regarder
 tiles ="Stamen Watercolor"
 
 #nous creons la carte avec barcelone au milieu
 carte_bus = folium.Map(location=[latitude_moy,longitude_moy],tiles=tiles, control_scale=True,zoom_control=False,zoom_start=12)
+carte_bus
 
 # rajoutons une éthiquete sur le milieu de la ville pour indiquer qu'il s'agit de barcelone
 folium.Marker(location=[latitude_moy,longitude_moy],
               popup='Barcelone',
              ).add_to(carte_bus)
+carte_bus
 
 ## grace a la fonction marker nous pouvons rajouter un arret de bus dans la carte avec ses infos en éthiquette
+## le code suivant a été rétiré du main pcq nous explorons une meilleure methode par la suite
 
 #folium.Marker(location=[data.iloc[0]['Latitude'],data.iloc[0]['Longitude']],
 #              popup=(data.iloc[0]['Bus.Stop']+data.iloc[0]['Transport']+'\n\n'+data.iloc[0]['Neighborhood.Name']),
- #            ).add_to(carte_bus)
+#            ).add_to(carte_bus)
 
 # maitenant essayons de rajouter tous les arrets a l'aide d'une boucle for 
 #for i in range(0,len(data)):
- #   folium.Marker(location=[data.iloc[i]['Latitude'],data.iloc[i]['Longitude']],
-  #                popup=(data.iloc[i]['Bus.Stop'])).add_to(carte_bus)
+#   folium.Marker(location=[data.iloc[i]['Latitude'],data.iloc[i]['Longitude']],
+#                popup=(data.iloc[i]['Bus.Stop'])).add_to(carte_bus)
 
 # nous remarquons que la carte ainsi produite est beaucoup trop chargée et pas tres utile je enleve ces marquers du code avec#
 
@@ -253,24 +253,27 @@ folium.Marker(location=[latitude_moy,longitude_moy],
 #data['bus']=100
 #coord = data[['Latitude','Longitude','bus']]
 #HeatMap(coord).add_to(carte_bus)
-
 # la méthode ne semble pas plus appropriée
 
 #rajoutons une couche a la carte afin d'afficher les barrieres géographiques des cartiers
 #a partir des deonnées de type geojason disponibles sur github
 url = 'https://raw.githubusercontent.com/martgnz/bcn-geodata/master/barris/barris.geojson'
 perimetre_quartiers = requests.get(url)
+perimetre_quartiers
 
 #on verifie et on constate que les données sont de type string
 print(perimetre_quartiers)
 geo = perimetre_quartiers.text
+print(type(geo))
+#print(geo)
 
-#transforme le string en dict
+#lit le json et transforme le string en dict
 geodict = json.loads(geo)
 print(type(geodict))
 
 #obtenir les nombre d'arrets de bus par quartier
 bus = data[['Neighborhood.Name','Transport']].groupby(['Neighborhood.Name']).count().reset_index()
+bus
 
 #ajouter les quartiers dans la carte avec l'info sur le nombre d'arrets
 folium.Choropleth(
@@ -280,12 +283,14 @@ folium.Choropleth(
     name='Arrets de bus',
     key_on='feature.properties.NOM',
                  ).add_to(carte_bus)
+carte_bus
 
 #idem mais juste pour les bus de nuit
 
 #obtenir les donnees
 nuit = data.loc[data['Transport'] == 'Night bus stop'] 
 quartier_nuit = nuit[['Neighborhood.Name','Transport']].groupby(['Neighborhood.Name']).count().reset_index()
+quartier_nuit
 
 #creer le filtre
 folium.Choropleth(
@@ -304,7 +309,8 @@ data = bus_stops
 #afficher la carte    
 carte_bus
 
-# comme ca
+## nous voyons que sur la carta le réseau de bus est principalement concentré au centreville et dans les banlieues le jours
+## tandis que uniquement au centre-ville la nuit
 
 
 
