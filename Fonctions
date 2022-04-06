@@ -1,1 +1,535 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import folium
+import requests
+import json
 
+
+#lire les données
+deaths = pd.read_csv("deaths.csv")
+accidents_2017 = pd.read_csv("accidents_2017.csv")
+air_quality_Nov2017 = pd.read_csv("air_quality_Nov2017.csv")
+air_stations_Nov2017 = pd.read_csv("air_stations_Nov2017.csv")
+births = pd.read_csv("births.csv")
+bus_stops = pd.read_csv("bus_stops.csv")
+immigrants_by_nationality = pd.read_csv("immigrants_by_nationality.csv")
+immigrants_emigrants_by_age = pd.read_csv("immigrants_emigrants_by_age.csv")
+immigrants_emigrants_by_destination = pd.read_csv("immigrants_emigrants_by_destination.csv")
+immigrants_emigrants_by_destination2 = pd.read_csv("immigrants_emigrants_by_destination2.csv")
+immigrants_emigrants_by_sex = pd.read_csv("immigrants_emigrants_by_sex.csv")
+life_expectancy = pd.read_csv("life_expectancy.csv")
+most_frequent_baby_names = pd.read_csv("most_frequent_baby_names.csv")
+most_frequent_names = pd.read_csv("most_frequent_names.csv")
+population = pd.read_csv("population.csv")
+transports = pd.read_csv("transports.csv")
+unemployment = pd.read_csv("unemployment.csv")
+
+#choisir quel dataframe sera traité
+
+## prenons population
+data = population
+
+print (type(data))
+
+
+## resumé des statistiques descriptives des colonnes
+data.describe(include ='all')
+
+# Tableau affichant le nombre de population par quartier 
+
+data_nb_population = data.groupby(['Neighborhood.Name'])[['Number']].sum() 
+
+
+# Tableau affichant le top 10 des quartiers avec la plus grande taille de population
+data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+
+# Nous voulons maintenant stocker ce "top 10" dans un dataframe
+
+data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+data_nb_populationtop10 
+
+#Histogramme population - message d'erreur
+
+# Histogramme présentant le nombre de population selon la ville, top 10 
+##barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y='Number', data=data_nb_populationtop10, order = data_nb_populationtop10['Neighborhood.Name'].value_counts().index)
+##barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
+##plt.xticks(rotation=90)
+##plt.show()
+#Ça ne fonctionne pas ici puisqu'en faisant le sort, les noms de quartiers devenaient des index. Il faut donc ajouter un reset.index()
+
+data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2).reset_index() 
+data_nb_populationtop10
+
+
+
+# # Histogramme présentant les 10 quartiers avec le plus de population 
+
+barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y="Number",data=data_nb_populationtop10, order = data_nb_populationtop10['Neighborhood.Name'].value_counts().index)
+barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
+plt.xticks(rotation=90)
+plt.show()
+
+# Tableau affichant le top 10 des quartiers avec la plus petite taille de population 
+
+data_nb_populationlast10= data_nb_population.sort_values(by=["Number"], ascending = False).tail(10).round(2).reset_index() 
+data_nb_populationlast10 
+
+# Histogramme présentant les 10 quartiers avec le moins de population 
+barplot = sns.catplot(kind='bar', x='Neighborhood.Name', y="Number",data=data_nb_populationlast10, order = data_nb_populationlast10['Neighborhood.Name'].value_counts().index)
+barplot.set(xlabel='Nom de la ville', ylabel="Population", title="Taille de population par quartier")
+plt.xticks(rotation=90)
+plt.show()
+
+
+# On veut maintenant s'intéresser à la répartition des transports
+transports = pd.read_csv("transports.csv")
+data_transports = transports
+data_transports
+
+# Voyons voir les différents types de transports utilisés
+colonne = 'Transport'
+data_transports[colonne].unique()
+
+df_transports = data_transports.groupby('Transport')['Transport'].agg('count').sort_values(ascending = False)
+df_transports
+
+# Essayons de voir quels sont les moyens de transport les plus populaires avec un pie chart 
+fig = plt.figure(figsize = (6, 6))
+plt.pie(df_transports,
+        labels = df_transports.index,
+        autopct = '%1.1f%%',
+        colors = ['#00A699','#FF5A60','#79CCCD','#767676'],
+        labeldistance = 1.2,
+        explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,), 
+        pctdistance =0.85,)
+        
+plt.title('Répartition des transports')
+plt.show() 
+
+
+#nous voulons que l'information soit affichée pour chaque quartier de 2013 a 2017
+
+
+#regardons les données
+display(data)
+
+#afin de faciliter l'analyse nous filtrerons les données pour garder seulement une année ex :2015
+msg = 'choisir une année entre 2013 et 2017\n'
+choix_a = int(input(msg))
+redemander ='oui'
+
+while redemander == 'oui':
+    if (choix_a <= 2017) and (choix_a >= 2013):
+        print("l'annee choisie est : {0}".format(choix_a))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez une année parmi: 2013, 2014, 2015, 2016 et 2017")
+        choix_a = int(input(msg))
+
+
+#analysons maitenant le df en conservant seulement les données de l'année choisie:
+
+df_tri_année = data[data['Year'] == choix_a]
+
+
+display(df_tri_année)
+# nous remarquons maitenant que les données semblent sous-divisées par groupe d'age et sexe
+# choisons un seul quartier pour analyser avec un peu plus de détail
+
+
+#mais quels sont les quartiers de Barcelone? demandons a python d'afficher les valeurs uniques des noms de quartiers
+#gardons cette liste de noms
+
+colonne = 'Neighborhood.Name'
+quartiers = data[colonne].unique()
+quartiers
+
+
+#continuons notre analyse en choisisant un quartier maitenant que nous les connaissons ex: 'el Barri Gòtic'
+
+msg = 'choisir un quartier\n'    
+
+#nous faisons une liste car on pourrait eventuellement modifier le code pour pouvoir selectionner plusieurs cartiers
+quartier = []
+q = (input(msg))
+quartier.append(q)
+
+redemander ='oui'
+while redemander == 'oui':
+    if q in quartiers:        
+        print("le quartier choisi est : {0}".format(q))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez un quartier dans la liste suivante")
+        print(quartiers)
+        q = (input(msg))
+
+df_tri_quartier = data.loc[data['Neighborhood.Name'].isin(quartier)]
+df_tri_quartier
+
+# nous avons reussi a filtrer par quartier mais perdons le filtre par année
+
+
+# incluons maitenant les deux filtres
+df_tri_multiple = data[(data['Year'] == choix_a) & data['Neighborhood.Name'].isin(quartier)]
+df_tri_multiple
+
+#nous remarquons que même après le double tri il y a des lignes preque identiques.
+#en fait chaque liste correspond a un citoyen, est-ce que la colonne nombre correspond a l'identifiant citoyen?
+
+
+# regroupons les citoyens par groupe d'age
+
+df_tri_multiple['Age'].value_counts()
+# nous voyons qu'il y a presque toujours le meme nombre de citoyens par groupe d'age, au final chaque ligne corresponds a une entree d'une fiche d'un groupe de citoyens avec les memes quaractéristiques
+
+## verification des types de données presents dans chaque colonne
+data.dtypes
+
+
+#modifier les types de données si besoin
+
+colonne = 'District.Name'
+#print (head(data[colonne]))
+data[colonne].head
+
+# Tableau affichant le nombre de population par quartier 
+
+data_nb_population = data.groupby(['Neighborhood.Name'])[['Number']].sum() 
+data_nb_population
+
+# appel du top 10 du nombre de population par quartier
+data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+
+# Nous voulons maintenant stocker ce "top 10" dans un dataframe
+data_nb_populationtop10 = data_nb_population.sort_values(by=["Number"], ascending = False).head(10).round(2) 
+data_nb_populationtop10
+
+# Tableau affichant le top 10 des quartiers avec la plus petite taille de population 
+data_nb_populationlast10= data_nb_population.sort_values(by=["Number"], ascending = False).tail(10).round(2) 
+data_nb_populationlast10 
+
+### code pour afficher la carte folium ###
+
+## prenons les arrets de bus
+data = bus_stops
+display(data)
+## nous voyons que les bus sont énumérés par quatier, coordonnées et si c'est des bus de nuit ou de jour
+
+#intialisation de la carte folium avec laquelle nous travaillerons
+carte_bus = folium.Map()
+carte_bus
+
+# nous voudrons afficher une carte des bus avec au centre le point milieu de tous les arrets.
+latitude_moy  = data['Latitude'].mean()
+longitude_moy = data['Longitude'].mean()
+
+# nous activons l'option de tuile watercolor pour un affichage plus simple et agreable a regarder
+tiles ="Stamen Watercolor"
+
+#nous creons la carte avec barcelone au milieu
+carte_bus = folium.Map(location=[latitude_moy,longitude_moy],tiles=tiles, control_scale=True,zoom_control=False,zoom_start=12)
+carte_bus
+
+# rajoutons une éthiquete sur le milieu de la ville pour indiquer qu'il s'agit de barcelone
+folium.Marker(location=[latitude_moy,longitude_moy],
+              popup='Barcelone',
+             ).add_to(carte_bus)
+carte_bus
+
+## grace a la fonction marker nous pouvons rajouter un arret de bus dans la carte avec ses infos en éthiquette
+## le code suivant a été rétiré du main pcq nous explorons une meilleure methode par la suite
+
+#folium.Marker(location=[data.iloc[0]['Latitude'],data.iloc[0]['Longitude']],
+#              popup=(data.iloc[0]['Bus.Stop']+data.iloc[0]['Transport']+'\n\n'+data.iloc[0]['Neighborhood.Name']),
+#            ).add_to(carte_bus)
+
+# maitenant essayons de rajouter tous les arrets a l'aide d'une boucle for 
+#for i in range(0,len(data)):
+#   folium.Marker(location=[data.iloc[i]['Latitude'],data.iloc[i]['Longitude']],
+#                popup=(data.iloc[i]['Bus.Stop'])).add_to(carte_bus)
+
+# nous remarquons que la carte ainsi produite est beaucoup trop chargée et pas tres utile je enleve ces marquers du code avec#
+
+##essayons de creer une heatmap 
+#data['bus']=1
+#coord = data[['Latitude','Longitude','bus']]
+#HeatMap(coord).add_to(carte_bus)
+
+#le resultat est une peu plus clair mais ne permet pas vraiement de retier de insight
+#essayons de rafiner les résultats
+
+#data['bus']=100
+#coord = data[['Latitude','Longitude','bus']]
+#HeatMap(coord).add_to(carte_bus)
+# la méthode ne semble pas plus appropriée
+
+#rajoutons une couche a la carte afin d'afficher les barrieres géographiques des cartiers
+#a partir des deonnées de type geojason disponibles sur github
+url = 'https://raw.githubusercontent.com/martgnz/bcn-geodata/master/barris/barris.geojson'
+perimetre_quartiers = requests.get(url)
+perimetre_quartiers
+
+#on verifie et on constate que les données sont de type string
+print(perimetre_quartiers)
+geo = perimetre_quartiers.text
+print(type(geo))
+#print(geo)
+
+#lit le json et transforme le string en dict
+geodict = json.loads(geo)
+print(type(geodict))
+
+#obtenir les nombre d'arrets de bus par quartier
+bus = data[['Neighborhood.Name','Transport']].groupby(['Neighborhood.Name']).count().reset_index()
+bus
+
+#ajouter les quartiers dans la carte avec l'info sur le nombre d'arrets
+folium.Choropleth(
+    geo_data=geodict,
+    data =bus,
+    columns=["Neighborhood.Name", "Transport"],
+    name='Arrets de bus',
+    key_on='feature.properties.NOM',
+                 ).add_to(carte_bus)
+carte_bus
+
+#idem mais juste pour les bus de nuit
+
+#obtenir les donnees
+nuit = data.loc[data['Transport'] == 'Night bus stop'] 
+quartier_nuit = nuit[['Neighborhood.Name','Transport']].groupby(['Neighborhood.Name']).count().reset_index()
+quartier_nuit
+
+#creer le filtre
+folium.Choropleth(
+    geo_data=geodict,
+    data =quartier_nuit,
+    fill_color="PuBuGn",
+    columns=["Neighborhood.Name", "Transport"],
+    name='Bus de nuit',
+    key_on='feature.properties.NOM',
+                 ).add_to(carte_bus)
+folium.LayerControl().add_to(carte_bus)
+
+#nous remettons data a notre valeur initiale puisque elle etait differente dans choropleth
+data = bus_stops
+
+#afficher la carte    
+display(carte_bus)
+
+## nous voyons que sur la carte le réseau de bus est principalement concentré au centreville et dans les banlieues le jours
+## tandis que uniquement au centre-ville la nuit
+
+
+
+#On souhaite afficher les 5 quartiers qui ont la meilleure 'life_expectancy' pour le sexe et la periode choisi par l'utilisateur.
+print(life_expectancy.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+
+# afin d'eviter des resultats vides, on verifie l'input de l'utilisateur avant de continuer.
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#on stocke les noms des colonnes de la dataframe 'life_expectancy' dans une liste et on garde juste les periodes.
+Periode = list(life_expectancy.columns)
+del(Periode[0])
+del(Periode[-1])
+print(Periode)
+#choissisez l'index de la periode voulu
+msg_p = "choisisez l'index de la periode voulu : 1,2,3,4  \n"
+choix_p = input(msg_p)
+# puisque les index des listes commence par 0 et non pas par 1, on change le type de l'input a 'integer' et on diminue le choix de l'utilisateur de 1  
+choix_p = int(choix_p) -1 
+print('la periode choisi est : {0}'.format(Periode[choix_p]))
+
+
+
+#On afficher les resultats selon les critères choisis:
+life_ex = life_expectancy[['Neighborhood','Gender',Periode[choix_p]]]
+life_ex = life_ex[(life_ex['Gender'] == choix_s)]
+life_ex = life_ex.sort_values(by = Periode[choix_p], ascending = False) 
+life_ex
+
+
+# On remarque qu'il y a des valeurs null qui ont été lues comme 'NaN', 
+# donc on souhaite remplacer les 'NaN' dans le resultat par 'No data'.
+life_ex[Periode[choix_p]] = life_ex[Periode[choix_p]].fillna("No Data")
+display(life_ex)
+
+
+
+# Ici on affiche les 5 quartiers qui ont la meilleure 'life_expectancy' selon les criteres choisi : 
+life_e = life_ex.head(5)
+display(life_e)
+
+ #Affichage
+barplot = sns.catplot(x="Neighborhood", y=Periode[choix_p], kind="bar", data=life_e, aspect=2) 
+barplot.set(xlabel='Neighborhood', ylabel='life_expectancy', title=' les 5 quartiers qui ont le meilleur life_expectancy')
+plt.xticks(rotation=90)
+plt.show()
+
+#On demande a l'utilisateur de choisir un quartier et un sexe afin d'analyser le changement du 'life expectancy' entre 2006 et 2014
+# demandons a python d'afficher les valeurs uniques des noms de quartiers
+colonne = 'Neighborhood'
+V_unique = life_expectancy[[colonne,'Gender']].groupby([colonne]).count().reset_index()
+V_unique = V_unique.drop(columns=['Gender'])
+print('Vous avez {0} quartiers'.format(V_unique.size))
+display(V_unique.T)
+
+# demandons a 'l'utilisateur de choisir un quartier: 
+msg = "choisisez l'index  du quartier a analyser\n"
+choix = int(input(msg))
+quartiers = V_unique.to_dict()
+quartier_choisi = quartiers['Neighborhood'][choix]
+print('Vous avez choisi : {0} -{1}'.format(choix,quartier_choisi))
+
+# demandons a 'l'utilisateur de choisir un sexe: 
+
+print(life_expectancy.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#On affiche les resultats selon les critères choisis:
+life_ex1 = life_expectancy[(life_expectancy['Neighborhood'] == quartier_choisi)&(life_expectancy['Gender']==choix_s)]
+life_ex1
+
+
+#on crée une dataframe qui nous permet de faire l'affichage.
+liife = life_ex1.T.reset_index()
+liife= liife.drop(0)
+liife= liife.drop(6)
+liife.columns = ["Periode" , "Life Expectancy"]
+liife
+
+
+life_ex_q = sns.relplot(kind='line', x='Periode', y='Life Expectancy', data=liife)
+life_ex_q.set(title=' Life expectancy pour le sexe :{0} et pour le quartier : {1}'.format(choix_s,quartier_choisi))
+plt.show()
+
+
+
+
+
+
+# Pour la table unemployment on souhaite garder juste les colonnes qui sont pertinants a notre analyse, donc commence par filtrer les données. 
+unemployment = unemployment[['Year','Neighborhood Name','Gender','Number']].groupby(['Year','Neighborhood Name','Gender']).sum().reset_index()
+unemployment.sort_values(by = 'Year')
+
+
+# a la fin, on souhaite comparer 3 quartier selon le nombre de personne en chomage.
+# On commence par demander a l'utilisateur de choisir le sexe qu'il souhaite analyser et on verifie l'entrée de l'utilisateur :
+print(unemployment.Gender.unique())
+msg = "choisisez le sexe voulu : \n"
+choix_s = input(msg)
+redemander = 'oui'
+while ( redemander == 'oui'):
+    if (choix_s == 'Male') or (choix_s == 'Female'):
+        print('le sexe choisi est : {0}'.format(choix_s))
+        redemander = 'non'
+        break
+    else : 
+        print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+        choix_s = input(msg)
+        
+#on affiche les années disponibles et on demande a l'utilisateur de choisir l'année:
+colonne_y = 'Year'
+V_unique_y = unemployment[[colonne_y,'Number']].groupby([colonne_y]).sum().reset_index()
+V_unique_y = V_unique_y.drop(columns=['Number'])
+display(V_unique_y.T)
+Years = V_unique_y.to_dict()
+msg = "choisir l'index  de l'année a analyser\n"
+choix = int(input(msg))
+year_choisi = Years['Year'][choix]
+print('Vous avez choisi : {0} -{1}'.format(choix,year_choisi))
+
+
+# On affiche les 3 quartiers qui ont le plus bas nombre de personne en chomage:
+chomage = unemployment[(unemployment['Gender'] == choix_s) & (unemployment['Year']== year_choisi) ]
+chomage = chomage.sort_values(by = 'Number', ascending = False) 
+chomage = chomage.tail(3)
+chomage
+
+#Affichage
+barplot = sns.catplot(x="Neighborhood Name", y='Number', kind="bar", data=chomage) 
+barplot.set(ylabel='Nombre de personnes en chômage.', title=' les 3 quartiers qui ont le plus bas nombre de personne en chomage')
+
+plt.show()
+
+###liste des différentes nationalités par quartier
+
+#Lire les données et les afficher afin d'avoir une idée générale de l'utilité de ceux-ci
+immigrants_by_nationality = pd.read_csv("immigrants_by_nationality.csv")
+data = immigrants_by_nationality
+
+display(data)
+
+#En regardant celles-ci nous nous apercevons qu'il serait intéressant d'observer la distribution ethnique par quartier en 2017
+
+#Extraire les données uniquement pour 2017
+df_tri_2017 = data[data['Year'] == 2017]
+display(df_tri_2017)
+
+#Permettre à l'utilisateur de regarder les données selon le quartier de son choix
+msg = 'choisir un quartier\n'
+quartier = []
+choix = (input(msg))
+quartier.append(choix)
+df_tri_quartier = data.loc[data['Neighborhood Name'].isin(quartier)]
+df_tri_quartier
+
+#On combine les deux codes afin d'analyser les données selon les quartiers mais uniquement en 2017
+df_tri_quartier_2017 = data[(data['Year'] == 2017) & data['Neighborhood Name'].isin(quartier)]
+df_tri_quartier_2017
+
+#On veut maintenant vérifier si le compte de nationalités est bon
+nationalite =df_tri_quartier_2017.groupby(['Neighborhood Name'])[['Nationality']].count()
+nationalite
+
+#Affichons le tout sur un histogramme afin de mieux visualiser la répartition
+Number = data["Number"]
+Nationality = data["Nationality"]
+histo = sns.catplot(kind = "bar", x = "Nationality" , y = "Number", data = df_tri_quartier_2017)
+histo.set(xlabel = "Nationality", ylabel = "Nombre", title = choix)
+plt.xticks(rotation=90)
+plt.show()
+
+#Nous voyons que l'histogramme est beaucoup trop chargé! réglons le tir.
+
+#tri par nationalité
+tri_nationalite = df_tri_quartier_2017[["Nationality","Number","Neighborhood Name"]].groupby(["Nationality"]).sum()
+display(tri_nationalite)
+
+#Nous observons que plusieurs données sont négligeables! Il est donc logique de vouloir faire un Top 20.
+nationalite20 = tri_nationalite.sort_values(by=["Number"], ascending = False).head(20).round(2).reset_index()
+nationalite20
+
+#histogramme des 20 nationalités les plus predominantes par quartier
+
+Number = data["Number"]
+Nationality = data["Nationality"]
+histo_2 = sns.catplot(kind = "bar", x = "Nationality" , y = "Number", data = nationalite20)
+histo.set(xlabel = "Nationality", ylabel = "Nombre", title = choix)
+plt.xticks(rotation=90)
+plt.show()
