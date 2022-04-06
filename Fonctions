@@ -195,6 +195,84 @@ def pie(explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,),
 pie()
 pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
 
+#plusieurs dataframes contiennent de la donnée temporelle et par quartier
+#essayons d'en faciliter le tri
+
+def tritempsetautre(data=population,col1='Year',col2 = 'Neighborhood.Name'):
+    data=data
+    col1=col1
+    col2 = col2
+    #display(data)
+
+    menos = (data[col1].min())
+    mas = (data[col1].max())
+    
+    msg = f'choisir une année entre {menos} et {mas}\n'
+    choix_a = int(input(msg))
+
+    redemander ='oui'
+    while redemander == 'oui':
+        if (choix_a <= mas) and (choix_a >= menos):
+            print(f"l'annee choisie est : {choix_a}")
+            redemander = 'non'
+            break
+        else : 
+            print("Choix inconnu, choissisez une année parmi:")
+            print(data[col1].unique())
+            choix_a = int(input(msg))
+
+    #analysons maitenant le df en conservant seulement les données de l'année choisie:
+    df_tri_année = data[data[col1] == choix_a]
+    df_tri_année
+
+    # nous remarquons maitenant que les données semblent sous-divisées par groupe d'age et sexe
+    # choisons un seul quartier pour analyser avec un peu plus de détail
+
+    #mais quels sont les quartiers de Barcelone? demandons a python d'afficher les valeurs uniques des noms de quartiers
+    #gardons cette liste de noms
+    quartiers = []
+    quartiers = data[col2].unique()
+    quartiers
+
+    print('voici vos choix:\n')
+    display(quartiers)
+
+    msg = 'choisir un filtre parmi les options\n'    
+
+    #nous faisons une liste car on pourrait eventuellement modifier le code pour pouvoir selectionner plusieurs cartiers
+    quartier = []
+    q = (input(msg))
+    quartier.append(q)
+
+    redemander ='oui'
+    while redemander == 'oui':
+        if q in quartiers:        
+            print(f"le choisi de filtre est : {q}")
+            redemander = 'non'
+            break
+        else : 
+            print("Choix inconnu, choissisez parmi la liste suivante")
+            print(quartiers)
+            q = (input(msg))
+
+    df_tri_quartier = data.loc[data[col2].isin(quartier)]
+    df_tri_quartier
+    # nous avons reussi a filtrer par quartier mais perdons le filtre par année
+
+    # incluons maitenant les deux filtres
+    df_tri_multiple = data[(data[col1] == choix_a) & data[col2].isin(quartier)]
+    display(df_tri_multiple)
+    return df_tri_multiple
+
+##cette fonction permet d'afficher et retourner un dataframe qui fait le tri d'un premier dataframe
+## le tri est fait selon l'année choisie et la valeur d'une colonne au choix
+## par défaut il montre toutes entrées correspondant a un quartier et une année de Barcelone
+#data - corresond au dataframe source
+#col1 a la colonne d'année
+#col2 a au deuxiemme tri
+
+tritempsetautre()
+tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
 
 #nous voulons que l'information soit affichée pour chaque quartier de 2013 a 2017
 
