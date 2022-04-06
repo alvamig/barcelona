@@ -69,6 +69,15 @@ fonctions = {}
 
 ba.bonjour(loadeddfs)
 ba.choixdf(loadeddfs,pd,data)
+
 ba.barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="Population",title="Taille de population par quartier",fonctions=fonctions)
 ba.barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs',fonctions=fonctions)
+
+#affiche la repartition des modes de transport ainsi que la repartition entre les bus de jour et de nuit
+ba.pie(data=transports)
+ba.pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
+
+#affiche la population et les gens en recherche d'emploi selon l'année et le quartier choisi
+ba.tritempsetautre(data=population)
+ba.tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
