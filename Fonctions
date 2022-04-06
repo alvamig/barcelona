@@ -92,7 +92,6 @@ while (reponse.lower()) == 'oui':
         display(newdata)
         break
         
-#choisir quel dataframe sera traité
 
 #les valeurs par défaut correspondent a un df preloadé mais peuvent être ajustées selon vos besoins
 #faites attention a la structure 
@@ -154,31 +153,47 @@ def barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlab
 # les arguments data -le df-,colonne1-triprimaire-,colonne2-trideclassification
 # et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés
 barres()
+barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs')
 
+
+#les valeurs par défaut correspondent a un df preloadé mais peuvent être ajustées selon vos besoins
+#faites attention a la structure 
 # On veut maintenant s'intéresser à la répartition des transports
-transports = pd.read_csv("transports.csv")
-data_transports = transports
-data_transports
+def pie(explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,),
+       title = 'Répartition des transports',
+       data = transports,
+       col1 = 'Transport'):
+    data_transports = data
+    data_transports
 
-# Voyons voir les différents types de transports utilisés
-colonne = 'Transport'
-data_transports[colonne].unique()
+    # Voyons voir les différents types de transports utilisés
+    colonne = col1
+    data_transports[colonne].unique()
 
-df_transports = data_transports.groupby('Transport')['Transport'].agg('count').sort_values(ascending = False)
-df_transports
+    df_transports = data_transports.groupby(col1)[col1].agg('count').sort_values(ascending = False)
+    df_transports
 
-# Essayons de voir quels sont les moyens de transport les plus populaires avec un pie chart 
-fig = plt.figure(figsize = (6, 6))
-plt.pie(df_transports,
-        labels = df_transports.index,
-        autopct = '%1.1f%%',
-        colors = ['#00A699','#FF5A60','#79CCCD','#767676'],
-        labeldistance = 1.2,
-        explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,), 
-        pctdistance =0.85,)
-        
-plt.title('Répartition des transports')
-plt.show() 
+    # Essayons de voir quels sont les moyens de transport les plus populaires avec un pie chart 
+    fig = plt.figure(figsize = (6, 6))
+    plt.pie(df_transports,
+            labels = df_transports.index,
+            autopct = '%1.1f%%',
+            colors = ['#00A699','#FF5A60','#79CCCD','#767676'],
+            labeldistance = 1.2,
+            explode = explode, 
+            pctdistance =0.85,)
+
+    plt.title(title)
+    plt.show()
+    return
+
+##cette fonction permet d'afficher un pie chart qui selon les proportions correspondant a l'aggregation d'une colonne au choix
+## par défaut il montre la  repartition des types de transports dans barcelone
+## explode doit etre None ou bien une serie de type array avec autant d'unités que de catégories dans le piechart
+#les arguments data -le df-,col1-triprimaire- peuvent etre chagés pour jouer avec d'autres données,
+# et title et explode pour ajuster l'affichage
+pie()
+pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
 
 
 #nous voulons que l'information soit affichée pour chaque quartier de 2013 a 2017
