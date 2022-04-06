@@ -320,9 +320,9 @@ folium.LayerControl().add_to(carte_bus)
 data = bus_stops
 
 #afficher la carte    
-carte_bus
+display(carte_bus)
 
-## nous voyons que sur la carta le réseau de bus est principalement concentré au centreville et dans les banlieues le jours
+## nous voyons que sur la carte le réseau de bus est principalement concentré au centreville et dans les banlieues le jours
 ## tandis que uniquement au centre-ville la nuit
 
 
@@ -477,12 +477,8 @@ barplot.set(ylabel='Nombre de personnes en chômage.', title=' les 3 quartiers q
 
 plt.show()
 
-#liste des différentes nationalités par quartier
+###liste des différentes nationalités par quartier
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
 #Lire les données et les afficher afin d'avoir une idée générale de l'utilité de ceux-ci
 immigrants_by_nationality = pd.read_csv("immigrants_by_nationality.csv")
 data = immigrants_by_nationality
