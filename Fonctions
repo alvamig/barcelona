@@ -26,6 +26,33 @@ population = pd.read_csv("population.csv")
 transports = pd.read_csv("transports.csv")
 unemployment = pd.read_csv("unemployment.csv")
 
+###donner l'option à l'utilisateur de loader un nouveau dataset autre que celui que nous utilisons ###
+intro = 'Bonjour! ce programme contient des données de la ville de Barcelone\n'
+intro += 'voulez vous rajouter un nouveau jeu de données? oui/non\n'
+
+reponse = input(intro)
+
+
+while (reponse.lower()) == 'oui':
+    msg = "veuillez entrer le nom ou l'emplacement des données:\n"
+    msg +="celles-ci doivent être en format csv\n"
+    msg +="le fichier est lu avec pandas.read_csv\n"
+    lieu = input(msg)
+    
+    try:
+        newdata = pd.read_csv(lieu)
+    except FileNotFoundError:
+        print('le fichier ne peut être lu')
+        print("veuillez vérifier l'emplacement ou le nom\n")
+        print('voulez-vous recommencer?')
+        reponse = input()
+    
+    else:
+        print('voici votre dataframe\n')
+        display(newdata)
+        break
+
+
 #choisir quel dataframe sera traité
 
 ## prenons population
