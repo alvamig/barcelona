@@ -60,7 +60,7 @@ if (reponse.lower()) == 'oui':
     
 
 ##donner l'option à l'utilisateur de choisi un dataset ou loader un autre que celui que nous utilisons##
-intro = 'voulez vous pouvez choisir un jeu de données ou en ajouer un nouveau.\n'
+intro = 'vous pouvez choisir un jeu de données ou en ajouer un nouveau.\n'
 intro += 'voulez-vous continuer? oui/non\n'
 
 reponse = input(intro)
@@ -86,7 +86,9 @@ while (reponse.lower()) == 'oui':
         data = newdata
         loadeddfs.append(lieu)
         display(newdata)
-        break#choisir quel dataframe sera traité
+        break
+        
+#choisir quel dataframe sera traité
 
 ## prenons population
 data = population
