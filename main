@@ -466,7 +466,7 @@ print('Vous avez choisi : {0} -{1}'.format(choix,year_choisi))
 
 
 # On affiche les 3 quartiers qui ont le plus bas nombre de personne en chomage:
-chomage = unemployment[(unemployment['Gender'] == aaa) & (unemployment['Year']== year_choisi) ]
+chomage = unemployment[(unemployment['Gender'] == choix_s) & (unemployment['Year']== year_choisi) ]
 chomage = chomage.sort_values(by = 'Number', ascending = False) 
 chomage = chomage.tail(3)
 chomage
