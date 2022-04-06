@@ -47,6 +47,8 @@ most_frequent_names = pd.read_csv("most_frequent_names.csv")
 population = pd.read_csv("population.csv")
 transports = pd.read_csv("transports.csv")
 unemployment = pd.read_csv("unemployment.csv")
+#par default
+data = population
 
 #crée une liste des dfs disponibles
 loadeddfs = []
@@ -60,9 +62,13 @@ loadeddfs.extend(["most_frequent_baby_names.csv","most_frequent_names.csv","popu
 #ce dictionnaire nous permettra de documenter les fonctions que nous créeons dans le programme
 fonctions = {}
 
-#appel des diverses fonctions
+
+##
+## cette partie du code fait appel aux des diverses fonctions du module que nous avons crée
+##
+
 ba.bonjour(loadeddfs)
-ba.choixdf(loadeddfs,pd)
+ba.choixdf(loadeddfs,pd,data)
 ba.barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="Population",title="Taille de population par quartier",fonctions=fonctions)
 ba.barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs',fonctions=fonctions)
