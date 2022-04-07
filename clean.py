@@ -81,3 +81,8 @@ ba.pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
 #affiche la population et les gens en recherche d'emploi selon l'année et le quartier choisi
 ba.tritempsetautre(data=population)
 ba.tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
+
+#afficher la concentration des arrets de bus et des bus de nuit 
+ba.carte(bus_stops)
+#afficher la concentration des accidents d'auto et ceux pendant la nuit 
+ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night')
