@@ -517,4 +517,55 @@ def unemployment(data):
     plt.show()
     return
 
+####cette fonction nous permet d'afficher deux histogrammes, l'un avec toutes les données- pas idéal
+### et l'autre avec un tri 
+def histo(data):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    #Extraire les données uniquement pour 2017
+    df_tri_2017 = data[data['Year'] == 2017]
+    display(df_tri_2017['Neighborhood Name'])
 
+    #Permettre à l'utilisateur de regarder les données selon le quartier de son choix
+    msg = 'choisir un quartier\n'
+    quartier = []
+    choix = (input(msg))
+    quartier.append(choix)
+    df_tri_quartier = data.loc[data['Neighborhood Name'].isin(quartier)]
+    df_tri_quartier
+
+    #On combine les deux codes afin d'analyser les données selon les quartiers mais uniquement en 2017
+    df_tri_quartier_2017 = data[(data['Year'] == 2017) & data['Neighborhood Name'].isin(quartier)]
+    df_tri_quartier_2017
+
+    #On veut maintenant vérifier si le compte de nationalités est bon
+    nationalite =df_tri_quartier_2017.groupby(['Neighborhood Name'])[['Nationality']].count()
+    nationalite
+
+    #Affichons le tout sur un histogramme afin de mieux visualiser la répartition
+    Number = data["Number"]
+    Nationality = data["Nationality"]
+    histo = sns.catplot(kind = "bar", x = "Nationality" , y = "Number", data = df_tri_quartier_2017)
+    histo.set(xlabel = "Nationality", ylabel = "Nombre", title = choix)
+    plt.xticks(rotation=90)
+    plt.show()
+
+    #Nous voyons que l'histogramme est beaucoup trop chargé! réglons le tir.
+
+    #tri par nationalité
+    tri_nationalite = df_tri_quartier_2017[["Nationality","Number","Neighborhood Name"]].groupby(["Nationality"]).sum()
+    display(tri_nationalite)
+
+    #Nous observons que plusieurs données sont négligeables! Il est donc logique de vouloir faire un Top 20.
+    nationalite20 = tri_nationalite.sort_values(by=["Number"], ascending = False).head(20).round(2).reset_index()
+    nationalite20
+
+    #histogramme des 20 nationalités les plus predominantes par quartier
+
+    Number = data["Number"]
+    Nationality = data["Nationality"]
+    histo_2 = sns.catplot(kind = "bar", x = "Nationality" , y = "Number", data = nationalite20)
+    histo.set(xlabel = "Nationality", ylabel = "Nombre", title = choix)
+    plt.xticks(rotation=90)
+    plt.show()
+    return
