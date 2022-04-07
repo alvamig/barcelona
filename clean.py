@@ -100,3 +100,5 @@ ba.sex(life_expectancy)
 #demande a l'utilisateur de choisir un sexe et une année et affiche les 3 quartiers avec le moins de chomage
 ba.unemployment(data=unemployment)
 
+#cette fonction affiche deux histogrammes en fonction des données un avec tout et ensuite avec un tri pour des resultats plus fins
+ba.histo(data = immigrants_by_nationality)
