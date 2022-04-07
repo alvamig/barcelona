@@ -73,7 +73,8 @@ ba.choixdf(loadeddfs,pd,data)
 ba.barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="Population",title="Taille de population par quartier",fonctions=fonctions)
 ba.barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs',fonctions=fonctions)
-
+ba.barres(data=births,colonne1 = 'Neighborhood Name',colonne2='Number',xlabel='Nom de la ville',
+           ylabel="nombre de naissances",title="nombre de naissances par quartier",fonctions=fonctions)
 #affiche la repartition des modes de transport ainsi que la repartition entre les bus de jour et de nuit
 ba.pie(data=transports)
 ba.pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
