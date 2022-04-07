@@ -86,3 +86,8 @@ ba.tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
 ba.carte(bus_stops)
 #afficher la concentration des accidents d'auto et ceux pendant la nuit 
 ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night')
+
+#afficher la concentration des arrets de bus et des bus de nuit 
+ba.carte(bus_stops)
+#afficher la concentration des accidents d'auto et ceux pendant la nuit 
+ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night',name="Accidents d'auto")
