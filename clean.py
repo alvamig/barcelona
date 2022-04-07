@@ -96,3 +96,7 @@ ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere=
 
 #affiche des analyses sur l'esperance de vie, le sexe et le quartier
 ba.sex(life_expectancy)
+
+#demande a l'utilisateur de choisir un sexe et une année et affiche les 3 quartiers avec le moins de chomage
+ba.unemployment(data=unemployment)
+
