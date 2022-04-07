@@ -108,3 +108,13 @@ ba.tritempsetautre(data=population)
 
 #Quelle est la répartition des chomeurs pour les differents mois de l'année et du quartier choisi par l'utilisateur?
 ba.tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
+
+
+### Dans ce projet nous avons pu mettre en pratique enormement de notions du cours de programation en gestion
+### A plus haut niveau le plus grand defi que nous avons su relever etait celui-ci de collaborer efficacement a distance
+### a cet effet nous avons adopté et appris a utiliser github
+### de plus lorsque au fur et a mesure que note code gagnait en longeur et complexité nous avons décidé de le découper
+### en fonctions. Cela nous a permis de gagner simplicité et flexibilité
+### une fois que nous avions des fonctions logiquement nous avons décidé de toutes les regrouper dans un module de notre cru
+### ainsi nous pouvons maintenant appeler au besoin
+### a plus bas niveau, nous avons apris a mettre en pratique Pandas, Seaborn, Folium ainsi que Requests
