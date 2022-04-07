@@ -233,7 +233,7 @@ def tritempsetautre(data,col1='Year',col2 = 'Neighborhood.Name'):
     # incluons maitenant les deux filtres
     df_tri_multiple = data[(data[col1] == choix_a) & data[col2].isin(quartier)]
     display(df_tri_multiple)
-    return df_tri_multiple
+    return 
 
 ### code pour afficher la carte folium ###
 def carte(data,col1='Neighborhood.Name',col2='Transport',critere='Night bus stop',name='Arrets de bus',url = 'https://raw.githubusercontent.com/martgnz/bcn-geodata/master/barris/barris.geojson',key_on='feature.properties.NOM'):
