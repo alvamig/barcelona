@@ -42,7 +42,7 @@ def choixdf(loadeddfs,pd,data):
                 loadeddfs.append(lieu)
             display(newdata)
             break
-    return data
+    return
 
 
 
