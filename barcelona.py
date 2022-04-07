@@ -119,7 +119,7 @@ et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés'''
     return
 
 
-##cette fonction permet d'afficher un pie chart qui selon les proportions correspondant a l'aggregation d'une colonne au choix
+##cette fonction permet d'afficher un pie chart des 10 plus grandes valeurs qui selon les proportions correspondant a l'aggregation d'une ##colonne au choix
 ## par défaut il montre la  repartition des types de transports dans barcelone
 ## explode doit etre None ou bien une serie de type array avec autant d'unités que de catégories dans le piechart
 #les arguments data -le df-,col1-triprimaire- peuvent etre chagés pour jouer avec d'autres données,
@@ -524,8 +524,14 @@ def histo(data):
     import matplotlib.pyplot as plt
     #Extraire les données uniquement pour 2017
     df_tri_2017 = data[data['Year'] == 2017]
-    display(df_tri_2017['Neighborhood Name'])
-
+    colonne = 'Neighborhood Name'
+    V_unique = df_tri_2017[[colonne,'Number']].groupby([colonne]).sum().reset_index()
+    V_unique = V_unique.drop(columns=['Number'])
+    print('Vous avez {0} quartiers'.format(V_unique.size))
+    display(V_unique)
+    
+    
+    
     #Permettre à l'utilisateur de regarder les données selon le quartier de son choix
     msg = 'choisir un quartier\n'
     quartier = []
