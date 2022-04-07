@@ -127,7 +127,7 @@ et  xlabel,ylabel et title - pour ajuste l'affichage peuvent être changés'''
 # On veut maintenant s'intéresser à la répartition des transports
 
 def pie(data,explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,),
-       title = 'Répartition des transports', col1 = 'Transport'):
+       title = 'Répartition des transports', col1 = 'Transport',ag='count',col2 = 'Transport'):
     data_transports = data
     data_transports
     import matplotlib.pyplot as plt
@@ -136,9 +136,9 @@ def pie(data,explode = (0.1, 0.01, 0.01,0.1,0.2,0.3,0.4,0.5,),
     colonne = col1
     data_transports[colonne].unique()
 
-    df_transports = data_transports.groupby(col1)[col1].agg('count').sort_values(ascending = False)
+    df_transports = data_transports.groupby(col1)[col2].agg(ag).sort_values(ascending = False).head(10)
     df_transports
-
+    
     # Essayons de voir quels sont les moyens de transport les plus populaires avec un pie chart 
     fig = plt.figure(figsize = (6, 6))
     plt.pie(df_transports,
