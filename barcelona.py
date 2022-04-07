@@ -354,4 +354,114 @@ def carte(data,col1='Neighborhood.Name',col2='Transport',critere='Night bus stop
     return
 
 
+#cette fonction permet de choisir entre le sexe, la periode temporelle et une variable qualitative-par default le cartier et il #affiche des visualisations, le top 5 des quartiers
+def sex(data):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+
+    data= data
+    col1='Gender'
+    print(data[col1].unique())
+    msg = f"choisisez parmi les valeurs affichees : \n"
+    choix_s = input(msg)
+
+
+    # afin d'eviter des resultats vides, on verifie l'input de l'utilisateur avant de continuer.
+    redemander = 'oui'
+    while ( redemander == 'oui'):
+        if (choix_s == 'Male') or (choix_s == 'Female'):
+            print(f'{col1}')
+            redemander = 'non'
+            break
+        else : 
+            print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+            choix_s = input(msg)
+
+    #on stocke les noms des colonnes de la dataframe 'life_expectancy' dans une liste et on garde juste les periodes.
+    Periode = list(data.columns)
+    del(Periode[0])
+    del(Periode[-1])
+    print(Periode)
+    #choissisez l'index de la periode voulu
+    msg_p = "choisisez l'index de la periode voulue le premier i=1:  \n"
+    choix_p = input(msg_p)
+    # puisque les index des listes commence par 0 et non pas par 1, on change le type de l'input a 'integer' et on diminue le choix de l'utilisateur de 1  
+    choix_p = int(choix_p) -1 
+    print('la periode choisie est : {0}'.format(Periode[choix_p]))
+
+    #On afficher les resultats selon les critères choisis:
+    life_ex = data[['Neighborhood','Gender',Periode[choix_p]]]
+    life_ex = life_ex[(life_ex['Gender'] == choix_s)]
+    life_ex = life_ex.sort_values(by = Periode[choix_p], ascending = False) 
+
+
+        #On souhaite afficher les 5 quartiers qui ont la meilleure 'life_expectancy' pour le sexe et la periode choisi par l'utilisateur.
+
+    
+
+    # On remarque qu'il y a des valeurs null qui ont été lues comme 'NaN', 
+    # donc on souhaite remplacer les 'NaN' dans le resultat par 'No data'.
+    life_ex[Periode[choix_p]] = life_ex[Periode[choix_p]].fillna("No Data")
+    #display(life_ex)
+
+
+
+    # Ici on affiche les 5 quartiers qui ont la meilleure 'life_expectancy' selon les criteres choisi : 
+    life_e = life_ex.head(5)
+    #display(life_e)
+
+     #Affichage
+    barplot = sns.catplot(x="Neighborhood", y=Periode[choix_p], kind="bar", data=life_e, aspect=2) 
+    barplot.set(xlabel='Neighborhood', ylabel='life_expectancy', title=' les 5 quartiers qui ont le meilleur life_expectancy')
+    plt.xticks(rotation=90)
+    plt.show()
+
+    #On demande a l'utilisateur de choisir un quartier et un sexe afin d'analyser le changement du 'life expectancy' entre 2006 et 2014
+    # demandons a python d'afficher les valeurs uniques des noms de quartiers
+    colonne = 'Neighborhood'
+    V_unique = data[[colonne,'Gender']].groupby([colonne]).count().reset_index()
+    V_unique = V_unique.drop(columns=['Gender'])
+    print('Vous avez {0} quartiers'.format(V_unique.size))
+    display(V_unique.T)
+
+    # demandons a 'l'utilisateur de choisir un quartier: 
+    msg = "choisisez l'index  du quartier a analyser\n"
+    choix = int(input(msg))
+    quartiers = V_unique.to_dict()
+    quartier_choisi = quartiers['Neighborhood'][choix]
+    print('Vous avez choisi : {0} -{1}'.format(choix,quartier_choisi))
+
+    # demandons a 'l'utilisateur de choisir un sexe: 
+
+    print(data.Gender.unique())
+    msg = "choisisez le sexe voulu : \n"
+    choix_s = input(msg)
+    redemander = 'oui'
+    while ( redemander == 'oui'):
+        if (choix_s == 'Male') or (choix_s == 'Female'):
+            print('le sexe choisi est : {0}'.format(choix_s))
+            redemander = 'non'
+            break
+        else : 
+            print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+            choix_s = input(msg)
+
+    #On affiche les resultats selon les critères choisis:
+    life_ex1 = data[(data['Neighborhood'] == quartier_choisi)&(data['Gender']==choix_s)]
+    life_ex1
+
+
+    #on crée une dataframe qui nous permet de faire l'affichage.
+    liife = life_ex1.T.reset_index()
+    liife= liife.drop(0)
+    liife= liife.drop(6)
+    liife.columns = ["Periode" , "Life Expectancy"]
+    liife
+
+
+    life_ex_q = sns.relplot(kind='line', x='Periode', y='Life Expectancy', data=liife)
+    life_ex_q.set(title=' Life expectancy pour le sexe :{0} et pour le quartier : {1}'.format(choix_s,quartier_choisi))
+    plt.show()
+    return
+
 
