@@ -70,35 +70,41 @@ fonctions = {}
 ba.bonjour(loadeddfs)
 ba.choixdf(loadeddfs,pd,data)
 
+
+
+# Maintenant, on commence notre analyse:
+
+
+# Quels sont les 10 quartiers qui ont les plus/moins de population ? 
+
 ba.barres(data=population,colonne1 = 'Neighborhood.Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="Population",title="Taille de population par quartier",fonctions=fonctions)
+
+# Quels sont les 10 quartiers qui ont les plus/moins de chômeurs ?
 ba.barres(data=unemployment,colonne1='Neighborhood Name',title='Emploi par quartier',xlabel='quartier',ylabel='chomeurs',fonctions=fonctions)
+
+# Quels sont les 10 quartiers qui ont les plus/moins de naissances ?
 ba.barres(data=births,colonne1 = 'Neighborhood Name',colonne2='Number',xlabel='Nom de la ville',
            ylabel="nombre de naissances",title="nombre de naissances par quartier",fonctions=fonctions)
-#affiche la repartition des modes de transport ainsi que la repartition entre les bus de jour et de nuit
+
+
+# Affichage de la repartition des modes de transport ainsi que la repartition entre les bus de jour et de nuit:
+
+#Quelle est la répartition des transports?
 ba.pie(data=transports)
+
+#Quels sont les différents types de bus-stop?  
 ba.pie(title='Bus Stops',data=bus_stops,col1='Transport',explode=None)
+
+#Quelle est la répartition des destinations d'immigration?
 ba.pie(title='immigrants par destination',data=immigrants_emigrants_by_destination2,col1='to',explode=None, ag='sum',col2 = 'weight')
 
-#affiche la population et les gens en recherche d'emploi selon l'année et le quartier choisi
+
+# Pour cette partie, on fait le tri des dataframe selon les critères choisis par l'utilisateur:
+
+
+# Quelle est la répartition des tranches d'âges de la population selon l'année et le quartier choisi par l'utilisateur? 
 ba.tritempsetautre(data=population)
+
+#Quelle est la répartition des chomeurs pour les differents mois de l'année et du quartier choisi par l'utilisateur?
 ba.tritempsetautre(data=unemployment,col1='Year',col2 = 'Neighborhood Name')
-
-#afficher la concentration des arrets de bus et des bus de nuit 
-ba.carte(bus_stops)
-#afficher la concentration des accidents d'auto et ceux pendant la nuit 
-ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night')
-
-#afficher la concentration des arrets de bus et des bus de nuit 
-ba.carte(bus_stops)
-#afficher la concentration des accidents d'auto et ceux pendant la nuit 
-ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night',name="Accidents d'auto")
-
-#affiche des analyses sur l'esperance de vie, le sexe et le quartier
-ba.sex(life_expectancy)
-
-#demande a l'utilisateur de choisir un sexe et une année et affiche les 3 quartiers avec le moins de chomage
-ba.unemployment(data=unemployment)
-
-#cette fonction affiche deux histogrammes en fonction des données un avec tout et ensuite avec un tri pour des resultats plus fins
-ba.histo(data = immigrants_by_nationality)
