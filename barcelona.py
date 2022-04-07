@@ -464,4 +464,57 @@ def sex(data):
     plt.show()
     return
 
+##cette fonction effectue des analyses sur la table unemployment de barcelone
+## elle permet a l'utilisateur de choisi le sexe et l'année
+## elle affiche ensuite les 3 quartiers avec le moins de chomage
+##elle sera adapté a un usage sur mesure lors d'une prochaine version de ce programme
+def unemployment(data):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    unemployment = data
+    # Pour la table unemployment on souhaite garder juste les colonnes qui sont pertinants a notre analyse, donc commence par filtrer les données. 
+    unemployment = unemployment[['Year','Neighborhood Name','Gender','Number']].groupby(['Year','Neighborhood Name','Gender']).sum().reset_index()
+    unemployment.sort_values(by = 'Year')
+
+
+    # a la fin, on souhaite comparer 3 quartier selon le nombre de personne en chomage.
+    # On commence par demander a l'utilisateur de choisir le sexe qu'il souhaite analyser et on verifie l'entrée de l'utilisateur :
+    print(unemployment.Gender.unique())
+    msg = "choisisez le sexe voulu : \n"
+    choix_s = input(msg)
+    redemander = 'oui'
+    while ( redemander == 'oui'):
+        if (choix_s == 'Male') or (choix_s == 'Female'):
+            print('le sexe choisi est : {0}'.format(choix_s))
+            redemander = 'non'
+            break
+        else : 
+            print("Choix inconnu, choissisez entre 'Male' et 'Female' ")
+            choix_s = input(msg)
+
+    #on affiche les années disponibles et on demande a l'utilisateur de choisir l'année:
+    colonne_y = 'Year'
+    V_unique_y = unemployment[[colonne_y,'Number']].groupby([colonne_y]).sum().reset_index()
+    V_unique_y = V_unique_y.drop(columns=['Number'])
+    display(V_unique_y.T)
+    Years = V_unique_y.to_dict()
+    msg = "choisir l'index  de l'année a analyser\n"
+    choix = int(input(msg))
+    year_choisi = Years['Year'][choix]
+    print('Vous avez choisi : {0} -{1}'.format(choix,year_choisi))
+
+
+    # On affiche les 3 quartiers qui ont le plus bas nombre de personne en chomage:
+    chomage = unemployment[(unemployment['Gender'] == choix_s) & (unemployment['Year']== year_choisi) ]
+    chomage = chomage.sort_values(by = 'Number', ascending = False) 
+    chomage = chomage.tail(3)
+    chomage
+
+    #Affichage
+    barplot = sns.catplot(x="Neighborhood Name", y='Number', kind="bar", data=chomage) 
+    barplot.set(ylabel='Nombre de personnes en chômage.', title=' les 3 quartiers qui ont le plus bas nombre de personne en chomage')
+
+    plt.show()
+    return
+
 
