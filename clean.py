@@ -93,3 +93,6 @@ ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere=
 ba.carte(bus_stops)
 #afficher la concentration des accidents d'auto et ceux pendant la nuit 
 ba.carte(accidents_2017,col1='Neighborhood Name',col2='Part of the day',critere='Night',name="Accidents d'auto")
+
+#affiche des analyses sur l'esperance de vie, le sexe et le quartier
+ba.sex(life_expectancy)
